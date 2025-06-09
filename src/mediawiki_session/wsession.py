@@ -1,9 +1,10 @@
 import requests
+from functools import cached_property
 class MediaWikiSession(requests.Session):
-    def __init__(self, access_token: str, mediawiki_api_url: str):
+    def __init__(self, access_token: str, apiurl: str):
         super().__init__()
         self.access_token = access_token
-        self.mediawiki_api_url = mediawiki_api_url
+        self.apiurl = apiurl
 
         # Apply OAuth bearer headers to all requests
         self.headers.update({
@@ -11,14 +12,14 @@ class MediaWikiSession(requests.Session):
             "Content-Type": "application/x-www-form-urlencoded"
         })
 
-    @property
+    @cached_property
     def edit_token(self) -> str:
         params = {
             "action": "query",
             "meta": "tokens",
             "format": "json"
         }
-        resp = self.get(self.mediawiki_api_url, params=params)
+        resp = self.get(self.apiurl, params=params)
         resp.raise_for_status()
         data = resp.json()
         return data['query']['tokens']['csrftoken']
@@ -32,4 +33,4 @@ class MediaWikiSession(requests.Session):
         url = mw['url']
         with open(mw['access token']) as f:
             token = f.read().strip()
-        return WikimediaSession(token, url)
+        return MediaWikiSession(token, url)
