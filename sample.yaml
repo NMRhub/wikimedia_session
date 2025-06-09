@@ -1,0 +1,5 @@
+---
+mediawiki:
+  url: https://myhsost.com/api.php
+  access token: /etc/wiki_yaml
+...
